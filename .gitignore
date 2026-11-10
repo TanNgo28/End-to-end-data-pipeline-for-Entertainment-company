@@ -1,0 +1,46 @@
+# Local credentials and identity files
+.env
+.env.*
+!.env.example
+.secrets/
+secrets/
+.aws/
+.ssh/
+.netrc
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+
+# Runtime state, volumes, generated exports and logs
+/.runtime/
+/data/
+/logs/
+/volumes/
+/powerbi/demo/
+*.log
+*.bak
+*.bak-*
+*.save
+*.sqlite*
+*.dbf
+*.parquet
+*.avro
+*.pbix
+
+# Downloaded artifacts and local environments
+*.jar
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+*.egg-info/
+.DS_Store
+Thumbs.db

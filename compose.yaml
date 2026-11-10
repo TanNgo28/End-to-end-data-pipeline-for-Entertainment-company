@@ -1,0 +1,112 @@
+name: entertainment-lakehouse
+
+x-seaweed-env: &seaweed-env
+  AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID:?run scripts/init_env.sh}"
+  AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY:?run scripts/init_env.sh}"
+  AWS_REGION: us-east-1
+
+x-flink: &flink
+  image: "${COMPOSE_PROJECT_NAME:-entertainment-lakehouse}-flink:local"
+  profiles: [ingest]
+  volumes:
+    - ./.runtime/flink-state:/opt/flink/pipeline-state
+
+services:
+  kafka:
+    image: apache/kafka:4.4.0
+    environment:
+      KAFKA_HEAP_OPTS: "-Xms256m -Xmx384m"
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_NODE_ID: "1"
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:9093"
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+      KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: "1"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+
+  seaweedfs:
+    image: chrislusf/seaweedfs@sha256:ccad23e18639c8b98cee17e7100b95830a06077b56d8e5b006d6dcf8ec5e94a0
+    environment:
+      <<: *seaweed-env
+      S3_TABLE_BUCKET: entertainment-iceberg
+    volumes:
+      - seaweedfs_data:/data
+
+  flink-jobmanager:
+    <<: *flink
+    build:
+      context: .
+      dockerfile: flink/Dockerfile
+    command: jobmanager
+    ports:
+      - "127.0.0.1:${FLINK_PORT:-8081}:8081"
+    environment:
+      <<: *seaweed-env
+      FLINK_PROPERTIES: |
+        jobmanager.rpc.address: flink-jobmanager
+        jobmanager.memory.process.size: 768m
+
+  flink-taskmanager:
+    <<: *flink
+    command: taskmanager
+    depends_on:
+      - flink-jobmanager
+    environment:
+      <<: *seaweed-env
+      FLINK_PROPERTIES: |
+        jobmanager.rpc.address: flink-jobmanager
+        taskmanager.memory.process.size: 1024m
+        taskmanager.numberOfTaskSlots: 1
+        parallelism.default: 1
+
+  oracle:
+    image: container-registry.oracle.com/database/free:23.26.3.0-lite-amd64
+    profiles: [serve]
+    environment:
+      ORACLE_PWD: "${ORACLE_PWD:?run scripts/init_env.sh}"
+    volumes:
+      - oracle_data:/opt/oracle/oradata
+    shm_size: 1g
+    mem_limit: 2g
+
+  trino:
+    image: trinodb/trino:484
+    profiles: [serve]
+    ports:
+      - "127.0.0.1:${TRINO_PORT:-8080}:8080"
+    environment:
+      <<: *seaweed-env
+      ORACLE_ANALYTICS_PASSWORD: "${ORACLE_ANALYTICS_PASSWORD:?run scripts/init_env.sh}"
+    volumes:
+      - ./trino/etc:/etc/trino:ro
+    mem_limit: 1g
+
+  tools:
+    profiles: [tools]
+    build:
+      context: .
+      dockerfile: docker/tools.Dockerfile
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+    environment:
+      <<: *seaweed-env
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      ICEBERG_REST_URI: http://seaweedfs:8181
+      S3_ENDPOINT: http://seaweedfs:8333
+      ORACLE_DSN: oracle:1521/FREEPDB1
+      ORACLE_PWD: "${ORACLE_PWD:?run scripts/init_env.sh}"
+      ORACLE_ANALYTICS_PASSWORD: "${ORACLE_ANALYTICS_PASSWORD:?run scripts/init_env.sh}"
+    volumes:
+      - ./.runtime:/app/.runtime
+    mem_limit: 384m
+
+volumes:
+  kafka_data:
+  seaweedfs_data:
+  oracle_data:

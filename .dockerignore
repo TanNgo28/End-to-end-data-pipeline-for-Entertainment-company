@@ -1,0 +1,12 @@
+**
+!.dockerignore
+!requirements.txt
+!docker/
+!docker/tools.Dockerfile
+!flink/
+!flink/Dockerfile
+!flink/connectors.lock
+!scripts/
+!scripts/*.py
+!oracle/
+!oracle/gold_tables.sql

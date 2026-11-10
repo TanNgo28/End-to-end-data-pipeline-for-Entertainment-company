@@ -1,0 +1,6 @@
+# SHA-256  Maven Central path
+5605c691d11a501382c383fecba37a7a552467da5ab7ba904ef5d6f3d62c5616  org/apache/flink/flink-sql-connector-kafka/5.0.0-2.2/flink-sql-connector-kafka-5.0.0-2.2.jar
+f3d2347a6e1c6885d5bcfd4f60c3ac3810ec11068fc161e04329baabf412d963  org/apache/hadoop/hadoop-client-api/3.3.6/hadoop-client-api-3.3.6.jar
+15f01bc804294df06d2effc87de363a83cf589f50558bdbf48f72541ad8de854  org/apache/hadoop/hadoop-client-runtime/3.3.6/hadoop-client-runtime-3.3.6.jar
+dd7e49ffa4ac9b215bed846581991259e3aec9bb2fa08d6cec029c46cd66d957  org/apache/iceberg/iceberg-aws-bundle/1.12.0/iceberg-aws-bundle-1.12.0.jar
+c79bbee8792b1115c321e4be99fab3fb36db0bf8fa2bba24b481e6da14416de3  org/apache/iceberg/iceberg-flink-runtime-2.2/1.12.0/iceberg-flink-runtime-2.2-1.12.0.jar
