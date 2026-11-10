@@ -1,0 +1,113 @@
+table 'Customer Profiles'
+	lineageTag: 0802d8bb-a73a-4da6-9848-f43aa89459be
+
+	measure 'Demo Customers' = DISTINCTCOUNT('Customer Profiles'[Customer ID])
+		formatString: #,0
+		lineageTag: dc33d449-68d9-40db-89e5-2710b5e4dca4
+
+	measure 'Cross-service Customers' = COUNTROWS(FILTER('Customer Profiles', 'Customer Profiles'[Streaming Events] > 0 && 'Customer Profiles'[Confirmed] > 0))
+		formatString: #,0
+		lineageTag: 5b08e0d8-68e5-4047-85cb-58e7a499b9c9
+
+	measure 'Customer Watch Minutes' = DIVIDE(SUM('Customer Profiles'[Watch Seconds]), 60)
+		formatString: #,0.00
+		lineageTag: ceede449-7bec-4410-854d-87d2793e39b3
+
+	measure 'Customer Bookings' = SUM('Customer Profiles'[Bookings])
+		formatString: #,0
+		lineageTag: 17bd1f82-f93e-4231-b1db-6722a168dcd6
+
+	measure 'Customer Spend VND' = SUM('Customer Profiles'[Net Spend VND])
+		formatString: #,0
+		lineageTag: 72110fd4-db3d-4751-bc2f-64ac42152714
+
+	measure 'Customer Plays' = SUM('Customer Profiles'[Plays])
+		formatString: #,0
+		lineageTag: 20318b3d-15f3-4286-8737-f7177a665769
+
+	measure 'Customer Check-ins' = SUM('Customer Profiles'[Check Ins])
+		formatString: #,0
+		lineageTag: de5a13ca-e3c7-44c5-bf5f-41a43bef72ef
+
+	measure 'Customer Check-in Rate' = DIVIDE([Customer Check-ins], SUM('Customer Profiles'[Confirmed]))
+		formatString: 0.0%
+		lineageTag: d4408604-2518-4eac-9253-764543a61b72
+
+	measure 'Avg Spend per Customer VND' = DIVIDE([Customer Spend VND], [Demo Customers])
+		formatString: #,0
+		lineageTag: e3a24fe3-53a2-4674-9d5c-a718dab0a69c
+
+	measure 'Avg Watch Minutes per Customer' = DIVIDE([Customer Watch Minutes], [Demo Customers])
+		formatString: #,0.00
+		lineageTag: cd33874b-e39a-48e6-988b-bbb4b7cbd753
+
+	column 'Customer ID'
+		dataType: string
+		lineageTag: c301654d-5218-4404-9ad0-3f0c565f88b2
+		summarizeBy: none
+		sourceColumn: customer_id
+
+	column Membership
+		dataType: string
+		lineageTag: 607edb24-f2cd-4342-9db2-7a1301b64950
+		summarizeBy: none
+		sourceColumn: membership
+
+	column 'Last Stream UTC'
+		dataType: string
+		lineageTag: ad0475b7-4b9b-48c1-bf07-ffd3b286a83f
+		summarizeBy: none
+		sourceColumn: last_stream_utc
+
+	column 'Streaming Events'
+		dataType: int64
+		lineageTag: 3d96599e-4e89-49d6-8ecf-fbb6084b6f51
+		summarizeBy: none
+		sourceColumn: streaming_events
+
+	column Plays
+		dataType: int64
+		lineageTag: 83b180b6-7ec0-42f0-a4f0-e7a6e983da14
+		summarizeBy: none
+		sourceColumn: plays
+
+	column 'Watch Seconds'
+		dataType: int64
+		lineageTag: 262b4e46-6003-4d68-8bd8-60944b3d0121
+		summarizeBy: none
+		sourceColumn: watch_seconds
+
+	column Bookings
+		dataType: int64
+		lineageTag: 5d4bd3e9-4baf-484e-9963-06baf174e289
+		summarizeBy: none
+		sourceColumn: bookings
+
+	column Confirmed
+		dataType: int64
+		lineageTag: bb6b18c3-d371-4676-baca-bb75cd305d81
+		summarizeBy: none
+		sourceColumn: confirmed
+
+	column 'Net Spend VND'
+		dataType: int64
+		lineageTag: 0d4a8277-a767-4195-8ef7-a45787948bc5
+		summarizeBy: none
+		sourceColumn: net_spend_vnd
+
+	column 'Check Ins'
+		dataType: int64
+		lineageTag: b66e2dfc-a252-4d71-a217-2e757d967ff9
+		summarizeBy: none
+		sourceColumn: check_ins
+
+	partition 'Customer Profiles' = m
+		mode: import
+		source =
+				let
+				    Source = ReadGold("customer_360", "SELECT customer_id, membership, last_stream_utc, CAST(streaming_events AS BIGINT) AS streaming_events, CAST(plays AS BIGINT) AS plays, CAST(watch_seconds AS BIGINT) AS watch_seconds, CAST(bookings AS BIGINT) AS bookings, CAST(confirmed AS BIGINT) AS confirmed, CAST(net_spend_vnd AS BIGINT) AS net_spend_vnd, CAST(check_ins AS BIGINT) AS check_ins FROM oracle.entertainment_analytics.customer_360 ORDER BY customer_id", {"customer_id", "membership", "last_stream_utc", "streaming_events", "plays", "watch_seconds", "bookings", "confirmed", "net_spend_vnd", "check_ins"}, {{"usr_demo_001", "Premium", "2026-11-15 19:00:48", 9, 2, 339, 5, 2, 900000, 1}, {"usr_demo_002", "Standard", "2026-11-15 19:03:43", 7, 2, 478, 4, 4, 1130000, 3}, {"usr_demo_003", "Free", "2026-11-15 19:02:33", 9, 2, 621, 3, 3, 1240000, 2}, {"usr_demo_004", "Premium", "2026-11-14 19:00:40", 8, 5, 607, 6, 4, 1660000, 4}, {"usr_demo_005", "Standard", "2026-11-15 19:00:13", 13, 5, 540, 4, 2, 530000, 2}, {"usr_demo_006", "Free", "2026-11-12 19:02:44", 1, 0, 32, 3, 3, 1240000, 3}, {"usr_demo_007", "Premium", "2026-11-15 19:03:50", 14, 3, 1182, 6, 4, 1130000, 2}, {"usr_demo_008", "Standard", "2026-11-15 19:03:22", 13, 5, 628, 5, 2, 600000, 2}, {"usr_demo_009", "Free", "2026-11-15 19:01:30", 8, 1, 506, 3, 3, 1240000, 2}, {"usr_demo_010", "Premium", "2026-11-14 19:03:00", 9, 4, 650, 5, 5, 1870000, 5}, {"usr_demo_011", "Standard", "2026-11-15 19:02:05", 4, 1, 184, 5, 3, 1110000, 3}, {"usr_demo_012", "Free", "2026-11-14 19:01:08", 6, 3, 351, 3, 1, 340000, 1}, {"usr_demo_013", "Premium", "2026-11-15 19:03:01", 13, 3, 803, 5, 5, 1870000, 4}, {"usr_demo_014", "Standard", "2026-11-14 19:02:18", 5, 0, 404, 4, 3, 1320000, 2}, {"usr_demo_015", "Free", "2026-11-15 19:00:06", 2, 1, 0, 4, 2, 900000, 2}, {"usr_demo_016", "Premium", "2026-11-15 19:03:15", 12, 5, 711, 5, 4, 1220000, 3}, {"usr_demo_017", "Standard", "2026-11-11 19:03:11", 3, 1, 221, 4, 4, 1600000, 3}, {"usr_demo_018", "Free", "2026-11-15 19:01:37", 3, 1, 297, 4, 2, 430000, 2}, {"usr_demo_019", "Premium", "2026-11-15 19:01:16", 8, 3, 696, 5, 2, 930000, 1}, {"usr_demo_020", "Standard", "2026-11-14 19:00:12", 3, 1, 584, 3, 3, 1320000, 2}, {"usr_demo_021", "Free", "2026-11-15 19:01:51", 6, 2, 583, 4, 3, 1170000, 3}, {"usr_demo_022", "Premium", "2026-11-15 19:03:57", 10, 2, 1677, 5, 2, 520000, 1}, {"usr_demo_023", "Standard", "2026-11-15 19:02:47", 8, 2, 831, 3, 2, 900000, 2}, {"usr_demo_024", "Free", "2026-11-13 19:03:13", 6, 2, 630, 4, 4, 1420000, 2}, {"usr_demo_025", "Premium", "2026-11-15 19:02:26", 6, 3, 74, 5, 3, 1010000, 3}, {"usr_demo_026", "Standard", "2026-11-15 19:00:34", 6, 1, 801, 2, 0, 0, 0}, {"usr_demo_027", "Free", "2026-11-14 19:00:05", 6, 2, 530, 4, 4, 1420000, 4}, {"usr_demo_028", "Premium", "2026-11-15 19:01:02", 8, 3, 947, 4, 4, 1130000, 3}, {"usr_demo_029", "Standard", "2026-11-13 19:03:41", 5, 2, 220, 3, 1, 250000, 1}, {"usr_demo_030", "Free", "2026-11-13 19:02:17", 13, 5, 821, 4, 2, 520000, 1}, {"usr_demo_031", "Premium", "2026-11-15 19:03:36", 9, 5, 485, 4, 4, 1130000, 3}, {"usr_demo_032", "Standard", "2026-11-15 19:02:40", 7, 2, 486, 3, 2, 990000, 1}}),
+				    Typed = Table.TransformColumnTypes(Source, {{"customer_id", type text}, {"membership", type text}, {"last_stream_utc", type text}, {"streaming_events", Int64.Type}, {"plays", Int64.Type}, {"watch_seconds", Int64.Type}, {"bookings", Int64.Type}, {"confirmed", Int64.Type}, {"net_spend_vnd", Int64.Type}, {"check_ins", Int64.Type}}, "en-US")
+				in Typed
+
+	annotation PBI_ResultType = Table
+

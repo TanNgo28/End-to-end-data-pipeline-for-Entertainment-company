@@ -1,0 +1,246 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "HourlyEvents",
+  "position": {
+    "x": 30,
+    "y": 251,
+    "z": 5000,
+    "height": 300,
+    "width": 680,
+    "tabOrder": 5000
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Hourly Activity"
+                    }
+                  },
+                  "Property": "Hour UTC"
+                }
+              },
+              "queryRef": "Hourly Activity.Hour UTC",
+              "nativeQueryRef": "Hour UTC",
+              "active": true
+            }
+          ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Hourly Activity"
+                    }
+                  },
+                  "Property": "Hourly Plays"
+                }
+              },
+              "queryRef": "Hourly Activity.Hourly Plays",
+              "nativeQueryRef": "Hourly Plays",
+              "active": true
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Hourly Activity"
+                    }
+                  },
+                  "Property": "Activity Watch Minutes"
+                }
+              },
+              "queryRef": "Hourly Activity.Activity Watch Minutes",
+              "nativeQueryRef": "Activity Watch Minutes",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Hourly Activity"
+                    }
+                  },
+                  "Property": "Stream Events"
+                }
+              },
+              "queryRef": "Hourly Activity.Stream Events",
+              "nativeQueryRef": "Stream Events",
+              "active": true
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Hourly Activity"
+                  }
+                },
+                "Property": "Hour UTC"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Streaming events by UTC hour'"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#122542'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "13D"
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "f0500be2cdca40a44ceb",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Hourly Activity"
+              }
+            },
+            "Property": "Hour UTC"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "b08c90b4a08b36a95dc2",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Hourly Activity"
+              }
+            },
+            "Property": "Stream Events"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "d133997f050726101370",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Hourly Activity"
+              }
+            },
+            "Property": "Hourly Plays"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "8cd42643a804c40dc1b1",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Hourly Activity"
+              }
+            },
+            "Property": "Activity Watch Minutes"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
+  }
+}

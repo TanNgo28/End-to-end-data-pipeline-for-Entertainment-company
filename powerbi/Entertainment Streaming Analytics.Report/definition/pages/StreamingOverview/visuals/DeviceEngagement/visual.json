@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
   "name": "DeviceEngagement",
   "position": {
-    "x": 30,
+    "x": 390,
     "y": 571,
-    "z": 7000,
-    "width": 540,
+    "z": 9000,
     "height": 299,
-    "tabOrder": 7000
+    "width": 440,
+    "tabOrder": 9000
   },
   "visual": {
     "visualType": "columnChart",
@@ -42,11 +42,11 @@
                       "Entity": "Device Engagement"
                     }
                   },
-                  "Property": "Device Events"
+                  "Property": "Average Watch Time (sec)"
                 }
               },
-              "queryRef": "Device Engagement.Device Events",
-              "nativeQueryRef": "Device Events",
+              "queryRef": "Device Engagement.Average Watch Time (sec)",
+              "nativeQueryRef": "Average Watch Time (sec)",
               "active": true
             }
           ]
@@ -61,11 +61,26 @@
                       "Entity": "Device Engagement"
                     }
                   },
-                  "Property": "Average Watch Time (sec)"
+                  "Property": "Device Events"
                 }
               },
-              "queryRef": "Device Engagement.Average Watch Time (sec)",
-              "nativeQueryRef": "Average Watch Time (sec)",
+              "queryRef": "Device Engagement.Device Events",
+              "nativeQueryRef": "Device Events",
+              "active": true
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Device Engagement"
+                    }
+                  },
+                  "Property": "Device Watch Minutes"
+                }
+              },
+              "queryRef": "Device Engagement.Device Watch Minutes",
+              "nativeQueryRef": "Device Watch Minutes",
               "active": true
             }
           ]
@@ -81,13 +96,12 @@
                     "Entity": "Device Engagement"
                   }
                 },
-                "Property": "Device Events"
+                "Property": "Average Watch Time (sec)"
               }
             },
             "direction": "Descending"
           }
-        ],
-        "isDefaultSort": false
+        ]
       }
     },
     "visualContainerObjects": {
@@ -104,7 +118,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Device Engagement  ·  accepted events'"
+                  "Value": "'Device Engagement  ·  avg watch seconds per event'"
                 }
               }
             },
@@ -161,6 +175,32 @@
               "expr": {
                 "Literal": {
                   "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#122542'"
+                    }
+                  }
                 }
               }
             }

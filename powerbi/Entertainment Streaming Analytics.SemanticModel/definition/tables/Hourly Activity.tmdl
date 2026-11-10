@@ -1,0 +1,75 @@
+table 'Hourly Activity'
+	lineageTag: 7af263bd-7ce6-4659-95e2-0084ea73e615
+
+	measure 'Stream Events' = SUM('Hourly Activity'[Event Count])
+		formatString: #,0
+		lineageTag: 2fb85b8d-9a53-4cce-9eee-38869b717d29
+
+	measure 'Hourly Plays' = SUM('Hourly Activity'[Play Count])
+		formatString: #,0
+		lineageTag: b011d4fc-5d76-46bb-81e5-386dc5c827ce
+
+	measure 'Activity Watch Minutes' = DIVIDE(SUM('Hourly Activity'[Watch Seconds]), 60)
+		formatString: #,0.00
+		lineageTag: 0a5e96f2-83bd-454d-ac8e-b03a1b691158
+
+	measure 'Users in Latest Hour' = VAR LatestHour = MAX('Hourly Activity'[Hour UTC]) RETURN CALCULATE(MAX('Hourly Activity'[Active Users]), 'Hourly Activity'[Hour UTC] = LatestHour)
+		formatString: #,0
+		lineageTag: 8b72ed1d-92f2-4e89-97b1-bf21fb972871
+
+	measure 'Peak Hourly Users' = MAX('Hourly Activity'[Active Users])
+		formatString: #,0
+		lineageTag: aa760222-f03b-476d-a414-40b155929762
+
+	measure 'Plays per Active User' = DIVIDE(SUM('Hourly Activity'[Play Count]), SUM('Hourly Activity'[Active Users]))
+		formatString: #,0.00
+		lineageTag: 5f7d1a03-291b-4737-a6f4-0d2874141ef7
+
+	measure 'Play Share of Events' = DIVIDE([Hourly Plays], [Stream Events])
+		formatString: 0.0%
+		lineageTag: f2dead9f-8da2-4611-ad89-ad676dfffd92
+
+	measure 'Watch Minutes per Hourly Play' = DIVIDE([Activity Watch Minutes], [Hourly Plays])
+		formatString: #,0.00
+		lineageTag: 658fb7bc-6a9a-4732-a6ac-34659543ae5a
+
+	column 'Hour UTC'
+		dataType: string
+		lineageTag: e6d1d453-03cd-4940-a7cf-ae06ff3c95e3
+		summarizeBy: none
+		sourceColumn: hour_utc
+
+	column 'Event Count'
+		dataType: int64
+		lineageTag: 9186d60e-8e1c-494e-8912-42d610666e8c
+		summarizeBy: none
+		sourceColumn: event_count
+
+	column 'Play Count'
+		dataType: int64
+		lineageTag: 52c5be33-9499-4981-be48-03e0419ca84b
+		summarizeBy: none
+		sourceColumn: play_count
+
+	column 'Active Users'
+		dataType: int64
+		lineageTag: 8511093b-6f6a-45d7-9e99-0c6306d95229
+		summarizeBy: none
+		sourceColumn: active_users
+
+	column 'Watch Seconds'
+		dataType: int64
+		lineageTag: 1c40eb4e-7c90-4c0f-8db5-bed356e348c5
+		summarizeBy: none
+		sourceColumn: watch_seconds
+
+	partition 'Hourly Activity' = m
+		mode: import
+		source =
+				let
+				    Source = ReadGold("hourly_user_activity", "SELECT hour_utc, CAST(event_count AS BIGINT) AS event_count, CAST(play_count AS BIGINT) AS play_count, CAST(active_users AS BIGINT) AS active_users, CAST(watch_seconds AS BIGINT) AS watch_seconds FROM oracle.entertainment_analytics.hourly_user_activity ORDER BY hour_utc", {"hour_utc", "event_count", "play_count", "active_users", "watch_seconds"}, {{"2026-11-09 19:00", 35, 13, 17, 1912}, {"2026-11-10 19:00", 35, 10, 22, 2643}, {"2026-11-11 19:00", 34, 14, 22, 2950}, {"2026-11-12 19:00", 34, 8, 24, 3054}, {"2026-11-13 19:00", 34, 12, 21, 2680}, {"2026-11-14 19:00", 34, 16, 19, 1862}, {"2026-11-15 19:00", 34, 6, 21, 2818}}),
+				    Typed = Table.TransformColumnTypes(Source, {{"hour_utc", type text}, {"event_count", Int64.Type}, {"play_count", Int64.Type}, {"active_users", Int64.Type}, {"watch_seconds", Int64.Type}}, "en-US")
+				in Typed
+
+	annotation PBI_ResultType = Table
+

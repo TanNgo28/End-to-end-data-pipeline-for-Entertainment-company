@@ -1,18 +1,22 @@
 table 'Top Content'
+	lineageTag: 9d56ea2c-1849-4a16-873d-88373bad4132
 
 	measure 'Content Plays' = SUM('Top Content'[Play Count])
 		formatString: #,0
+		lineageTag: 97555cb9-bdbd-43dc-b448-1656c8c0e2d8
 
 	column 'Content ID'
 		dataType: string
+		lineageTag: bae0fd90-498c-4a56-9a56-68d853bff843
 		summarizeBy: none
 		sourceColumn: content_id
 
 	column 'Play Count'
 		dataType: int64
+		isHidden
+		lineageTag: c0b4e0de-9e1b-4c59-b49b-4c1517644999
 		summarizeBy: none
 		sourceColumn: play_count
-		isHidden
 
 	partition 'Top Content' = m
 		mode: import
@@ -23,3 +27,4 @@ table 'Top Content'
 				in Typed
 
 	annotation PBI_ResultType = Table
+

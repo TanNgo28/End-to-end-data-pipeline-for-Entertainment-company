@@ -1,0 +1,267 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "HourlyDetail",
+  "position": {
+    "x": 950,
+    "y": 571,
+    "z": 9000,
+    "height": 299,
+    "width": 460,
+    "tabOrder": 9000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Hourly Activity"
+                    }
+                  },
+                  "Property": "Hour UTC"
+                }
+              },
+              "queryRef": "Hourly Activity.Hour UTC",
+              "nativeQueryRef": "Hour UTC",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Hourly Activity"
+                    }
+                  },
+                  "Property": "Event Count"
+                }
+              },
+              "queryRef": "Hourly Activity.Event Count",
+              "nativeQueryRef": "Event Count",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Hourly Activity"
+                    }
+                  },
+                  "Property": "Play Count"
+                }
+              },
+              "queryRef": "Hourly Activity.Play Count",
+              "nativeQueryRef": "Play Count",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Hourly Activity"
+                    }
+                  },
+                  "Property": "Active Users"
+                }
+              },
+              "queryRef": "Hourly Activity.Active Users",
+              "nativeQueryRef": "Active Users",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Hourly Activity"
+                    }
+                  },
+                  "Property": "Watch Seconds"
+                }
+              },
+              "queryRef": "Hourly Activity.Watch Seconds",
+              "nativeQueryRef": "Watch Seconds",
+              "active": true
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Hourly Activity"
+                  }
+                },
+                "Property": "Hour UTC"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Hourly activity detail'"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#122542'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "13D"
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "2b27e2bf776003a4041e",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Hourly Activity"
+              }
+            },
+            "Property": "Hour UTC"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "d976176dca5bc8c4c590",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Hourly Activity"
+              }
+            },
+            "Property": "Event Count"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "65e6a3a7c88c90c870c2",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Hourly Activity"
+              }
+            },
+            "Property": "Play Count"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "49222681746ad8411e93",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Hourly Activity"
+              }
+            },
+            "Property": "Active Users"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "3d3ec758d524e7a00e02",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Hourly Activity"
+              }
+            },
+            "Property": "Watch Seconds"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
+  }
+}

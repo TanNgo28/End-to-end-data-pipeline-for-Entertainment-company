@@ -1,29 +1,40 @@
 table 'Daily Streaming'
+	lineageTag: fa55c473-45d9-4289-b22a-48685948955d
 
 	measure 'Daily Plays' = SUM('Daily Streaming'[Play Count])
 		formatString: #,0
+		lineageTag: d2dde04b-fb47-42b0-b6af-c4bf66a70dee
 
 	measure 'Daily Watch Time (min)' = DIVIDE(SUM('Daily Streaming'[Watch Seconds]), 60)
 		formatString: #,0.00
+		lineageTag: 6a34da80-ca91-4da1-bba6-8f55b6566a0c
+
+	measure 'Watch Minutes per Play' = DIVIDE([Daily Watch Time (min)], [Daily Plays])
+		formatString: #,0.00
+		lineageTag: bdfc07c9-0613-4eb0-9837-1727c028629c
 
 	column 'UTC Date'
 		dataType: dateTime
+		formatString: yyyy-MM-dd
+		lineageTag: a586f68b-fbf2-4114-a7ae-b268bf4586cf
 		summarizeBy: none
 		sourceColumn: event_date
-		formatString: yyyy-MM-dd
+
 		annotation UnderlyingDateTimeDataType = Date
 
 	column 'Play Count'
 		dataType: int64
+		isHidden
+		lineageTag: d22e257b-6db1-4e0a-9e41-edead0dd05cf
 		summarizeBy: none
 		sourceColumn: play_count
-		isHidden
 
 	column 'Watch Seconds'
 		dataType: int64
+		isHidden
+		lineageTag: 1fc127f9-b224-45a9-8439-5033f9b6d882
 		summarizeBy: none
 		sourceColumn: total_watch_seconds
-		isHidden
 
 	partition 'Daily Streaming' = m
 		mode: import
@@ -34,3 +45,4 @@ table 'Daily Streaming'
 				in Typed
 
 	annotation PBI_ResultType = Table
+

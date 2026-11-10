@@ -1,0 +1,108 @@
+table 'Booking Transactions'
+	lineageTag: d72630a4-53f0-4835-8392-0953a403e37c
+
+	measure 'Total Bookings' = SUM('Booking Transactions'[Booking Count])
+		formatString: #,0
+		lineageTag: ddac5621-d729-4399-a7cb-a8ac4a8dec49
+
+	measure 'Captured Payments' = SUM('Booking Transactions'[Payments Captured])
+		formatString: #,0
+		lineageTag: ee68ddcd-6fa9-485c-b96e-9f5194422c09
+
+	measure 'Declined Payments' = SUM('Booking Transactions'[Payments Declined])
+		formatString: #,0
+		lineageTag: 5957d0ba-3cc5-4acf-a197-22ad0980bdaa
+
+	measure 'Refunded Payments' = SUM('Booking Transactions'[Refunds])
+		formatString: #,0
+		lineageTag: e9f7f5bd-a14c-453c-9db6-168a0a4d159b
+
+	measure 'Net Booking Revenue VND' = SUM('Booking Transactions'[Gross VND]) - SUM('Booking Transactions'[Refund VND])
+		formatString: #,0
+		lineageTag: 9235650e-c443-4d32-a373-b09c8d3ca2f7
+
+	measure 'Payment Decline Rate' = DIVIDE([Declined Payments], [Captured Payments] + [Declined Payments])
+		formatString: 0.0%
+		lineageTag: f87f7f37-212b-4f34-9039-10e9918e6415
+
+	measure 'Gross Booking VND' = SUM('Booking Transactions'[Gross VND])
+		formatString: #,0
+		lineageTag: 69c0a66a-beba-4494-9477-4d81682a679a
+
+	measure 'Refund Amount VND' = SUM('Booking Transactions'[Refund VND])
+		formatString: #,0
+		lineageTag: cf2b819d-087b-428c-bae5-a69f2e31d8bf
+
+	measure 'Payment Success Rate' = DIVIDE([Captured Payments], [Captured Payments] + [Declined Payments])
+		formatString: 0.0%
+		lineageTag: aa7dc7e9-f3cb-42b8-ba65-965075597638
+
+	measure 'Refund Rate' = DIVIDE([Refunded Payments], [Captured Payments])
+		formatString: 0.0%
+		lineageTag: 428e681b-9c0f-46f1-9fe3-b26091406e0d
+
+	measure 'Cancellation Rate' = DIVIDE(CALCULATE([Total Bookings], KEEPFILTERS('Booking Transactions'[Booking Status] = "Cancelled")), [Total Bookings])
+		formatString: 0.0%
+		lineageTag: 2a65eebc-e95f-4410-a6e0-8a6963ab99e1
+
+	measure 'Avg Captured Booking VND' = DIVIDE([Gross Booking VND], [Captured Payments])
+		formatString: #,0
+		lineageTag: a89e87eb-a46c-40a2-8ecd-2991ea828054
+
+	measure 'Rate Scale Max' = 1
+		formatString: 0%
+		isHidden
+		lineageTag: 37b0ae02-749d-4b06-8cc2-ee78a1b3fe22
+
+	column 'Booking Status'
+		dataType: string
+		lineageTag: 6ae93c8d-962f-45ac-b7f7-2d8f4d660f4f
+		summarizeBy: none
+		sourceColumn: booking_status
+
+	column 'Booking Count'
+		dataType: int64
+		lineageTag: 5ed6b82e-53e3-4bf7-a90c-d7ad29dff223
+		summarizeBy: none
+		sourceColumn: booking_count
+
+	column 'Payments Captured'
+		dataType: int64
+		lineageTag: 4618f4ba-0208-4fca-84e9-2911fbc181ab
+		summarizeBy: none
+		sourceColumn: payments_captured
+
+	column 'Payments Declined'
+		dataType: int64
+		lineageTag: 69b0dbda-50c7-40db-ad13-4e21f3320756
+		summarizeBy: none
+		sourceColumn: payments_declined
+
+	column Refunds
+		dataType: int64
+		lineageTag: fe293509-5419-4671-8b38-73a655c0fef4
+		summarizeBy: none
+		sourceColumn: refunds
+
+	column 'Gross VND'
+		dataType: int64
+		lineageTag: 9c5650d7-a35a-4fa5-abd3-22beeaedc395
+		summarizeBy: none
+		sourceColumn: gross_vnd
+
+	column 'Refund VND'
+		dataType: int64
+		lineageTag: 73f9f281-db58-4a8f-abf7-b6bf28621759
+		summarizeBy: none
+		sourceColumn: refund_vnd
+
+	partition 'Booking Transactions' = m
+		mode: import
+		source =
+				let
+				    Source = ReadGold("booking_transactions", "SELECT booking_status, CAST(booking_count AS BIGINT) AS booking_count, CAST(payments_captured AS BIGINT) AS payments_captured, CAST(payments_declined AS BIGINT) AS payments_declined, CAST(refunds AS BIGINT) AS refunds, CAST(gross_vnd AS BIGINT) AS gross_vnd, CAST(refund_vnd AS BIGINT) AS refund_vnd FROM oracle.entertainment_analytics.booking_transactions ORDER BY booking_status", {"booking_status", "booking_count", "payments_captured", "payments_declined", "refunds", "gross_vnd", "refund_vnd"}, {{"Cancelled", 19, 19, 0, 19, 6980000, 6980000}, {"Confirmed", 92, 92, 0, 0, 33040000, 0}, {"Pending payment", 20, 0, 20, 0, 0, 0}}),
+				    Typed = Table.TransformColumnTypes(Source, {{"booking_status", type text}, {"booking_count", Int64.Type}, {"payments_captured", Int64.Type}, {"payments_declined", Int64.Type}, {"refunds", Int64.Type}, {"gross_vnd", Int64.Type}, {"refund_vnd", Int64.Type}}, "en-US")
+				in Typed
+
+	annotation PBI_ResultType = Table
+

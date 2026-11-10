@@ -3,10 +3,10 @@
   "name": "DailyTrends",
   "position": {
     "x": 30,
-    "y": 250,
+    "y": 251,
     "z": 5000,
-    "width": 802,
     "height": 300,
+    "width": 450,
     "tabOrder": 5000
   },
   "visual": {
@@ -67,6 +67,21 @@
               "queryRef": "Daily Streaming.Daily Watch Time (min)",
               "nativeQueryRef": "Daily Watch Time (min)",
               "active": true
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Daily Streaming"
+                    }
+                  },
+                  "Property": "Watch Minutes per Play"
+                }
+              },
+              "queryRef": "Daily Streaming.Watch Minutes per Play",
+              "nativeQueryRef": "Watch Minutes per Play",
+              "active": true
             }
           ]
         }
@@ -86,8 +101,7 @@
             },
             "direction": "Ascending"
           }
-        ],
-        "isDefaultSort": false
+        ]
       }
     },
     "visualContainerObjects": {

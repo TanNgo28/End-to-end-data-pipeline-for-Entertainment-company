@@ -1,10 +1,16 @@
 expression DataMode = "Demo" meta [IsParameterQuery=true, List={"Demo", "Trino", "CSV"}, DefaultValue="Demo", Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 3541bffd-4a35-4a53-ad49-ef0219d3a550
+
 	annotation PBI_ResultType = Text
 
 expression TrinoBaseUrl = "http://127.0.0.1:8080" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: ae403df6-e2be-4bd1-a7b1-6eba3c55e6d8
+
 	annotation PBI_ResultType = Text
 
 expression CsvFolder = "" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=false]
+	lineageTag: 3c90bc76-91dc-4eaf-b7d1-80a6b7b71f2c
+
 	annotation PBI_ResultType = Text
 
 expression ReadGold =
@@ -42,4 +48,7 @@ expression ReadGold =
 		        else if DataMode = "Demo" then Table.FromRows(fallback, columns)
 		        else error "Use Demo, Trino, or CSV for DataMode."
 		in Result
+	lineageTag: f8d93937-be3b-4724-a0f5-8d75e9c79659
+
 	annotation PBI_ResultType = Function
+

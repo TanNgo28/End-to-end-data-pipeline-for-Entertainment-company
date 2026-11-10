@@ -1,33 +1,44 @@
 table 'Device Engagement'
+	lineageTag: c55aa1b7-0d72-41e3-868f-cb86394d1ed7
 
 	measure 'Device Events' = SUM('Device Engagement'[Event Count])
 		formatString: #,0
+		lineageTag: a3c7b54d-f2dc-4c68-a5ae-7fe72604e92a
 
 	measure 'Average Watch Time (sec)' = DIVIDE(SUM('Device Engagement'[Watch Seconds]), [Device Events])
 		formatString: #,0.00
+		lineageTag: 0ae75967-9a22-4dbb-87f8-9e46efaad69d
 
-	column 'Device'
+	measure 'Device Watch Minutes' = DIVIDE(SUM('Device Engagement'[Watch Seconds]), 60)
+		formatString: #,0.00
+		lineageTag: 5449904b-02fe-40b8-9d57-02602495679b
+
+	column Device
 		dataType: string
+		lineageTag: 761baddf-09a2-4161-854f-56c01108b698
 		summarizeBy: none
 		sourceColumn: device
 
 	column 'Event Count'
 		dataType: int64
+		isHidden
+		lineageTag: cf10af84-890c-48f0-a3a3-0ffdd353f81e
 		summarizeBy: none
 		sourceColumn: event_count
-		isHidden
 
 	column 'Watch Seconds'
 		dataType: int64
+		isHidden
+		lineageTag: 04cb18f3-3df8-404b-920f-effc8b276826
 		summarizeBy: none
 		sourceColumn: total_watch_seconds
-		isHidden
 
 	column 'Gold Average Watch Seconds'
 		dataType: double
+		isHidden
+		lineageTag: 6d4ffeb4-ee18-4c68-8f08-e845a6753da1
 		summarizeBy: none
 		sourceColumn: average_watch_seconds
-		isHidden
 
 	partition 'Device Engagement' = m
 		mode: import
@@ -38,3 +49,4 @@ table 'Device Engagement'
 				in Typed
 
 	annotation PBI_ResultType = Table
+

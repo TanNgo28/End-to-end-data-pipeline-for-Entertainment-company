@@ -1,30 +1,37 @@
 table 'Content Completion'
+	lineageTag: c3703694-2e13-4d8b-9ea1-1d4fc52bec2e
 
 	measure 'Completed Events' = SUM('Content Completion'[Complete Count])
 		formatString: #,0
+		lineageTag: a36ef4da-92a3-428e-8771-a00f3a3536df
 
 	measure 'Stopped Events' = SUM('Content Completion'[Stop Count])
 		formatString: #,0
+		lineageTag: 158688a9-b43c-4e3a-b287-277a4bf6bd23
 
 	measure 'Content Completion Rate' = DIVIDE([Completed Events], [Completed Events] + [Stopped Events])
 		formatString: 0.0%
+		lineageTag: 731a102e-000b-4654-94f4-acb01ce32939
 
 	column 'Content ID'
 		dataType: string
+		lineageTag: a25a2bb9-c1ac-46a2-893b-58107c54d814
 		summarizeBy: none
 		sourceColumn: content_id
 
 	column 'Complete Count'
 		dataType: int64
+		isHidden
+		lineageTag: 42c2a956-ae94-4a69-80e0-a50f00375fda
 		summarizeBy: none
 		sourceColumn: completed_count
-		isHidden
 
 	column 'Stop Count'
 		dataType: int64
+		isHidden
+		lineageTag: 3cb1f837-2f47-4ced-ba05-246af27c0a51
 		summarizeBy: none
 		sourceColumn: stopped_count
-		isHidden
 
 	partition 'Content Completion' = m
 		mode: import
@@ -35,3 +42,4 @@ table 'Content Completion'
 				in Typed
 
 	annotation PBI_ResultType = Table
+

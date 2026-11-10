@@ -1,0 +1,20 @@
+{
+  "name": "Entertainment Lakehouse",
+  "dataColors": [
+    "#2a78d6",
+    "#eb6834",
+    "#1baf7a",
+    "#eda100",
+    "#e87ba4",
+    "#008300",
+    "#6250d6",
+    "#e34948"
+  ],
+  "foreground": "#122542",
+  "foregroundNeutralSecondary": "#4D617E",
+  "background": "#FFFFFF",
+  "tableAccent": "#007D79",
+  "good": "#008300",
+  "neutral": "#eda100",
+  "bad": "#e34948"
+}

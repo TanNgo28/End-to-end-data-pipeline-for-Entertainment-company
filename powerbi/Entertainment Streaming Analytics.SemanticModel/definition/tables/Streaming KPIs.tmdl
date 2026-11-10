@@ -1,31 +1,38 @@
 table 'Streaming KPIs'
+	lineageTag: 1b7f3332-19c7-4326-8c7b-e7bedb42600f
 
 	measure 'Total Plays' = SUM('Streaming KPIs'[Play Count])
 		formatString: #,0
+		lineageTag: 96a20488-a04e-4040-8084-dada485f2fa6
 
 	measure 'Unique Viewers' = MAX('Streaming KPIs'[Unique Viewer Count])
 		formatString: #,0
+		lineageTag: cb2afdd9-1ab3-4b15-b49e-dfd7319b9e0c
 
 	measure 'Total Watch Time (min)' = DIVIDE(SUM('Streaming KPIs'[Watch Seconds]), 60)
 		formatString: #,0.00
+		lineageTag: 86be04d9-6b2e-4f99-b8f6-1ae4c219da9c
 
 	column 'Play Count'
 		dataType: int64
+		isHidden
+		lineageTag: 65c32c5d-406e-4a6a-86dd-9f7303f86a75
 		summarizeBy: none
 		sourceColumn: play_count
-		isHidden
 
 	column 'Unique Viewer Count'
 		dataType: int64
+		isHidden
+		lineageTag: 40d16f3b-abbe-495b-8d3b-565f27859e89
 		summarizeBy: none
 		sourceColumn: unique_viewers
-		isHidden
 
 	column 'Watch Seconds'
 		dataType: int64
+		isHidden
+		lineageTag: 27f48528-e6b1-4fd7-89c8-c4ccdb1e2105
 		summarizeBy: none
 		sourceColumn: total_watch_seconds
-		isHidden
 
 	partition 'Streaming KPIs' = m
 		mode: import
@@ -36,3 +43,4 @@ table 'Streaming KPIs'
 				in Typed
 
 	annotation PBI_ResultType = Table
+

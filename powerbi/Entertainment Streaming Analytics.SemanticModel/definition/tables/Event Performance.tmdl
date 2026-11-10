@@ -1,0 +1,91 @@
+table 'Event Performance'
+	lineageTag: 60692e16-4242-487b-94e7-b0c72baf6ee7
+
+	measure 'Tickets Sold' = SUM('Event Performance'[Sold])
+		formatString: #,0
+		lineageTag: be2b28cd-0787-476e-9ff6-014b66059ae5
+
+	measure 'Show Check-ins' = SUM('Event Performance'[Checked In])
+		formatString: #,0
+		lineageTag: 551c917f-921c-4aec-97ef-44e18d6b2fce
+
+	measure 'Ticket Fill Rate' = DIVIDE([Tickets Sold], SUM('Event Performance'[Capacity]))
+		formatString: 0.0%
+		lineageTag: 913659d2-5f1e-4d7f-a8f6-9880c3bfa819
+
+	measure 'Attendance Rate' = DIVIDE([Show Check-ins], [Tickets Sold])
+		formatString: 0.0%
+		lineageTag: 592b56e2-fe1a-430a-9a10-c1c36e38006c
+
+	measure 'Show Net Revenue VND' = SUM('Event Performance'[Net Revenue VND])
+		formatString: #,0
+		lineageTag: 2d95dd28-919c-4bf7-acd3-2c754cd2bd3b
+
+	measure 'Seat Capacity' = SUM('Event Performance'[Capacity])
+		formatString: #,0
+		lineageTag: 24c8e733-8ed2-4cd3-a6a0-3ba435317933
+
+	measure 'Unsold Seats' = [Seat Capacity] - [Tickets Sold]
+		formatString: #,0
+		lineageTag: c1a8378a-91a5-45d7-9c23-634af991f388
+
+	measure 'No-show Tickets' = [Tickets Sold] - [Show Check-ins]
+		formatString: #,0
+		lineageTag: 9826dd29-5c4f-4853-8a74-9a7e5e97f70c
+
+	measure 'Avg Ticket Revenue VND' = DIVIDE([Show Net Revenue VND], [Tickets Sold])
+		formatString: #,0
+		lineageTag: 1c21f517-a676-49c6-8fe0-5f441f31f7b9
+
+	column 'Show ID'
+		dataType: string
+		lineageTag: 590241f0-cec8-4a5b-bbb2-a327c4556821
+		summarizeBy: none
+		sourceColumn: show_id
+
+	column 'Show Name'
+		dataType: string
+		lineageTag: ba0afeee-f372-46e5-951c-0e26d37aca33
+		summarizeBy: none
+		sourceColumn: show_name
+
+	column Category
+		dataType: string
+		lineageTag: 7652356d-d0b1-467c-b7f8-f3321348c6a8
+		summarizeBy: none
+		sourceColumn: category
+
+	column Capacity
+		dataType: int64
+		lineageTag: f83fe0c4-5e39-42ff-b831-698bf69bf9c0
+		summarizeBy: none
+		sourceColumn: capacity
+
+	column Sold
+		dataType: int64
+		lineageTag: e3f5f9af-4bb6-41d0-a800-1dbf465ed806
+		summarizeBy: none
+		sourceColumn: sold
+
+	column 'Checked In'
+		dataType: int64
+		lineageTag: 0c1698e4-081d-437e-823b-1d8f313bf7ec
+		summarizeBy: none
+		sourceColumn: checked_in
+
+	column 'Net Revenue VND'
+		dataType: int64
+		lineageTag: 9fd6a9fd-5b6a-4391-9e16-f7db6e8ca89a
+		summarizeBy: none
+		sourceColumn: net_revenue_vnd
+
+	partition 'Event Performance' = m
+		mode: import
+		source =
+				let
+				    Source = ReadGold("event_performance", "SELECT show_id, show_name, category, CAST(capacity AS BIGINT) AS capacity, CAST(sold AS BIGINT) AS sold, CAST(checked_in AS BIGINT) AS checked_in, CAST(net_revenue_vnd AS BIGINT) AS net_revenue_vnd FROM oracle.entertainment_analytics.event_performance ORDER BY show_id", {"show_id", "show_name", "category", "capacity", "sold", "checked_in", "net_revenue_vnd"}, {{"EV01", "Indie Nights", "Concert", 16, 13, 10, 5460000}, {"EV02", "City Jazz", "Concert", 24, 18, 15, 11700000}, {"EV03", "Animation Weekend", "Screening", 20, 15, 12, 2700000}, {"EV04", "Film Premiere", "Screening", 28, 20, 16, 5000000}, {"EV05", "Comedy Live", "Comedy", 18, 15, 12, 5100000}, {"EV06", "Studio Sessions", "Workshop", 14, 11, 8, 3080000}}),
+				    Typed = Table.TransformColumnTypes(Source, {{"show_id", type text}, {"show_name", type text}, {"category", type text}, {"capacity", Int64.Type}, {"sold", Int64.Type}, {"checked_in", Int64.Type}, {"net_revenue_vnd", Int64.Type}}, "en-US")
+				in Typed
+
+	annotation PBI_ResultType = Table
+

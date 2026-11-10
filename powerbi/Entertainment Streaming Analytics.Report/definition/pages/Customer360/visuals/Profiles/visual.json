@@ -1,0 +1,253 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "Profiles",
+  "position": {
+    "x": 490,
+    "y": 571,
+    "z": 10000,
+    "height": 299,
+    "width": 920,
+    "tabOrder": 10000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Customer Profiles"
+                    }
+                  },
+                  "Property": "Customer ID"
+                }
+              },
+              "queryRef": "Customer Profiles.Customer ID",
+              "nativeQueryRef": "Customer ID",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Customer Profiles"
+                    }
+                  },
+                  "Property": "Membership"
+                }
+              },
+              "queryRef": "Customer Profiles.Membership",
+              "nativeQueryRef": "Membership",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Customer Profiles"
+                    }
+                  },
+                  "Property": "Last Stream UTC"
+                }
+              },
+              "queryRef": "Customer Profiles.Last Stream UTC",
+              "nativeQueryRef": "Last Stream UTC",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Customer Profiles"
+                    }
+                  },
+                  "Property": "Streaming Events"
+                }
+              },
+              "queryRef": "Customer Profiles.Streaming Events",
+              "nativeQueryRef": "Streaming Events",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Customer Profiles"
+                    }
+                  },
+                  "Property": "Plays"
+                }
+              },
+              "queryRef": "Customer Profiles.Plays",
+              "nativeQueryRef": "Plays",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Customer Profiles"
+                    }
+                  },
+                  "Property": "Bookings"
+                }
+              },
+              "queryRef": "Customer Profiles.Bookings",
+              "nativeQueryRef": "Bookings",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Customer Profiles"
+                    }
+                  },
+                  "Property": "Confirmed"
+                }
+              },
+              "queryRef": "Customer Profiles.Confirmed",
+              "nativeQueryRef": "Confirmed",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Customer Profiles"
+                    }
+                  },
+                  "Property": "Check Ins"
+                }
+              },
+              "queryRef": "Customer Profiles.Check Ins",
+              "nativeQueryRef": "Check Ins",
+              "active": true
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Customer Profiles"
+                    }
+                  },
+                  "Property": "Customer Spend VND"
+                }
+              },
+              "queryRef": "Customer Profiles.Customer Spend VND",
+              "nativeQueryRef": "Customer Spend VND",
+              "active": true
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Customer Profiles"
+                  }
+                },
+                "Property": "Customer ID"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Customer profiles · scroll to explore'"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#122542'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "13D"
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

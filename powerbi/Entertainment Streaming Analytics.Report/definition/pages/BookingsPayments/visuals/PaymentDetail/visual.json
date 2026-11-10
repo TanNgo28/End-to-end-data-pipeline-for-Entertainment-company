@@ -1,0 +1,221 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "PaymentDetail",
+  "position": {
+    "x": 610,
+    "y": 571,
+    "z": 11000,
+    "width": 800,
+    "height": 299,
+    "tabOrder": 11000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Booking Transactions"
+                    }
+                  },
+                  "Property": "Booking Status"
+                }
+              },
+              "queryRef": "Booking Transactions.Booking Status",
+              "nativeQueryRef": "Booking Status",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Booking Transactions"
+                    }
+                  },
+                  "Property": "Booking Count"
+                }
+              },
+              "queryRef": "Booking Transactions.Booking Count",
+              "nativeQueryRef": "Booking Count",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Booking Transactions"
+                    }
+                  },
+                  "Property": "Payments Captured"
+                }
+              },
+              "queryRef": "Booking Transactions.Payments Captured",
+              "nativeQueryRef": "Payments Captured",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Booking Transactions"
+                    }
+                  },
+                  "Property": "Payments Declined"
+                }
+              },
+              "queryRef": "Booking Transactions.Payments Declined",
+              "nativeQueryRef": "Payments Declined",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Booking Transactions"
+                    }
+                  },
+                  "Property": "Refunds"
+                }
+              },
+              "queryRef": "Booking Transactions.Refunds",
+              "nativeQueryRef": "Refunds",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Booking Transactions"
+                    }
+                  },
+                  "Property": "Gross VND"
+                }
+              },
+              "queryRef": "Booking Transactions.Gross VND",
+              "nativeQueryRef": "Gross VND",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Booking Transactions"
+                    }
+                  },
+                  "Property": "Refund VND"
+                }
+              },
+              "queryRef": "Booking Transactions.Refund VND",
+              "nativeQueryRef": "Refund VND",
+              "active": true
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Booking Transactions"
+                    }
+                  },
+                  "Property": "Net Booking Revenue VND"
+                }
+              },
+              "queryRef": "Booking Transactions.Net Booking Revenue VND",
+              "nativeQueryRef": "Net Booking Revenue VND",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Payment and refund detail'"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#122542'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "13D"
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,16 +1,29 @@
 model Model
 	culture: en-US
 	defaultPowerBIDataSourceVersion: powerBI_V3
-	sourceQueryCulture: en-US
 	discourageImplicitMeasures
+	sourceQueryCulture: en-US
 	dataAccessOptions
 		legacyRedirects
 		returnErrorValuesAsNull
 
-	annotation __PBI_TimeIntelligenceEnabled = 0
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBIDesktopVersion = 2.143.878.0 (25.05)+b20aa3b866ec1b70879135a4e60e4b1301c75b21
+
+annotation PBI_QueryOrder = ["Streaming KPIs","Daily Streaming","Top Content","Device Engagement","Content Completion","DataMode","TrinoBaseUrl","CsvFolder","ReadGold","Hourly Activity","Event Performance","Booking Transactions","Customer Profiles"]
+
+annotation PBI_ProTooling = ["DevMode"]
 
 ref table 'Streaming KPIs'
 ref table 'Daily Streaming'
 ref table 'Top Content'
 ref table 'Device Engagement'
 ref table 'Content Completion'
+ref table 'Hourly Activity'
+ref table 'Event Performance'
+ref table 'Booking Transactions'
+ref table 'Customer Profiles'
+
+ref cultureInfo en-US
+
