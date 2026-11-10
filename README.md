@@ -29,6 +29,8 @@ The streaming path is continuous through Bronze. Silver, Gold, and Oracle refres
 | Network | The first build downloads images, Maven artifacts, and PyPI dependencies from their public registries. |
 | Local ports | Flink UI on `127.0.0.1:8081` and Trino on `127.0.0.1:8080` by default. Kafka, S3, the REST catalog, and Oracle stay on the Compose network. |
 
+For step-by-step installation of WSL 2, Docker, Git and Power BI Desktop, see the [setup guide](docs/setup.md).
+
 The Compose stack uses Kafka 4.4.0, Flink 2.2.1 with Java 21, Iceberg 1.12.0, SeaweedFS 4.53, Oracle AI Database Free Lite 23.26.3.0, and Trino 484. The Oracle image is distributed under the Oracle Free Use Terms. See [Oracle's local container documentation](https://docs.oracle.com/en/database/oracle/agent-memory/26.8/guide/run-locally.html) and the [Trino Oracle connector requirements](https://trino.io/docs/current/connector/oracle.html).
 
 ## Run the demo from a clean checkout
