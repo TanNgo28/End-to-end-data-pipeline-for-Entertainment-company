@@ -18,26 +18,24 @@ flowchart LR
 
 The streaming path is continuous through Bronze. Silver, Gold, and Oracle refresh on demand. This lets an 8 GB host run the ingestion and serving phases separately. The Power BI project opens in Demo mode by default and can refresh against Trino or its CSV exports. See the [acceptance record](docs/evidence/README.md) for the validation status of each mode.
 
-## Requirements
+## Prerequisites
 
-| Requirement | Details |
-|---|---|
-| Host | x86-64 Linux or Windows with Ubuntu on WSL 2 and Docker Desktop Linux containers. The Oracle image in Compose is amd64. |
-| Docker | Docker Engine with BuildKit and the Docker Compose v2 CLI or later. |
-| Host tools | Git, Bash, `flock`, `timeout`, and standard Linux utilities. Python and Java run in containers. |
-| Resources | Allow about 4 GiB for the Docker/WSL environment and reserve 15 GB for images, build layers, and demo data. An 8 GB host can use the staged workflow. |
-| Network | The first build downloads images, Maven artifacts, and PyPI dependencies from their public registries. |
-| Local ports | Flink UI on `127.0.0.1:8081` and Trino on `127.0.0.1:8080` by default. Kafka, S3, the REST catalog, and Oracle stay on the Compose network. |
+- x86-64 Linux, or Windows with [WSL 2](https://learn.microsoft.com/windows/wsl/install). The Oracle image is amd64 only.
+- [Docker](https://docs.docker.com/get-docker/) with Compose v2, plus Git and Bash.
+- 8 GB RAM (about 4 GB for Docker) and 20 GB free disk.
+- [Power BI Desktop](https://www.microsoft.com/en-us/download/details.aspx?id=58494) to open the report (Windows only).
 
-For step-by-step installation of WSL 2, Docker, Git and Power BI Desktop, see the [setup guide](docs/setup.md).
+Python, Java and every service run in containers. Flink is published on `127.0.0.1:8081` and Trino on `127.0.0.1:8080`.
 
 The Compose stack uses Kafka 4.4.0, Flink 2.2.1 with Java 21, Iceberg 1.12.0, SeaweedFS 4.53, Oracle AI Database Free Lite 23.26.3.0, and Trino 484. The Oracle image is distributed under the Oracle Free Use Terms. See [Oracle's local container documentation](https://docs.oracle.com/en/database/oracle/agent-memory/26.8/guide/run-locally.html) and the [Trino Oracle connector requirements](https://trino.io/docs/current/connector/oracle.html).
 
 ## Run the demo from a clean checkout
 
-Open a Bash shell at the repository root. On WSL, place the checkout on the Linux filesystem for Docker bind mounts.
+On WSL, clone into the Linux filesystem, not `/mnt/c`.
 
 ```bash
+git clone https://github.com/tannm28/entertainment_lakehouse.git
+cd entertainment_lakehouse
 scripts/init_env.sh
 scripts/run_demo.sh
 cat .runtime/exports/streaming_kpis.csv
