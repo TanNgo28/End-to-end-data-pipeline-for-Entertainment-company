@@ -31,6 +31,9 @@ credentials.json
 
 # Downloaded artifacts and local environments
 *.jar
+*.tgz
+*.tar.gz
+*.zip
 .venv/
 venv/
 __pycache__/
@@ -45,8 +48,16 @@ dist/
 .DS_Store
 Thumbs.db
 
-# Power BI Desktop local state
+# Power BI Desktop local state (editorSettings.json stays tracked)
 **/.pbi/localSettings.json
 **/.pbi/cache.abf
 **/.pbi/unappliedChanges.json
 *.abf
+
+# Local Compose overrides and editor state
+compose.override.yaml
+docker-compose.override.yml
+.vscode/
+.idea/
+.claude/
+*.swp

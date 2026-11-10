@@ -1,0 +1,4 @@
+"booking_status","booking_count","payments_captured","payments_declined","refunds","gross_vnd","refund_vnd"
+"Cancelled","19","19","0","19","6980000","6980000"
+"Confirmed","92","92","0","0","33040000","0"
+"Pending payment","20","0","20","0","0","0"
