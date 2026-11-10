@@ -1,0 +1,36 @@
+table 'Daily Streaming'
+
+	measure 'Daily Plays' = SUM('Daily Streaming'[Play Count])
+		formatString: #,0
+
+	measure 'Daily Watch Time (min)' = DIVIDE(SUM('Daily Streaming'[Watch Seconds]), 60)
+		formatString: #,0.00
+
+	column 'UTC Date'
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: event_date
+		formatString: yyyy-MM-dd
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Play Count'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: play_count
+		isHidden
+
+	column 'Watch Seconds'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: total_watch_seconds
+		isHidden
+
+	partition 'Daily Streaming' = m
+		mode: import
+		source =
+				let
+				    Source = ReadGold("daily_streaming_trends", "SELECT event_date, CAST(play_count AS BIGINT) AS play_count, CAST(total_watch_seconds AS BIGINT) AS total_watch_seconds FROM oracle.entertainment_analytics.daily_streaming_trends ORDER BY event_date", {"event_date", "play_count", "total_watch_seconds"}, {{"2026-11-09", 13, 1912}, {"2026-11-10", 10, 2643}, {"2026-11-11", 14, 2950}, {"2026-11-12", 8, 3054}, {"2026-11-13", 12, 2680}, {"2026-11-14", 16, 1862}, {"2026-11-15", 6, 2818}}),
+				    Typed = Table.TransformColumnTypes(Source, {{"event_date", type date}, {"play_count", Int64.Type}, {"total_watch_seconds", Int64.Type}}, "en-US")
+				in Typed
+
+	annotation PBI_ResultType = Table

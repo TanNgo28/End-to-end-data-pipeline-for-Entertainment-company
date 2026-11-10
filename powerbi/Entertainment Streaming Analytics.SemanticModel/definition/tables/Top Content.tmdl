@@ -1,0 +1,25 @@
+table 'Top Content'
+
+	measure 'Content Plays' = SUM('Top Content'[Play Count])
+		formatString: #,0
+
+	column 'Content ID'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: content_id
+
+	column 'Play Count'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: play_count
+		isHidden
+
+	partition 'Top Content' = m
+		mode: import
+		source =
+				let
+				    Source = ReadGold("top_10", "SELECT content_id, CAST(play_count AS BIGINT) AS play_count FROM oracle.entertainment_analytics.content_popularity WHERE play_count > 0 ORDER BY play_count DESC, content_id LIMIT 10", {"content_id", "play_count"}, {{"movie_demo_01", 13}, {"movie_demo_04", 9}, {"movie_demo_02", 8}, {"movie_demo_12", 8}, {"movie_demo_03", 7}, {"movie_demo_05", 7}, {"movie_demo_06", 7}, {"movie_demo_09", 6}, {"movie_demo_08", 5}, {"movie_demo_07", 3}}),
+				    Typed = Table.TransformColumnTypes(Source, {{"content_id", type text}, {"play_count", Int64.Type}}, "en-US")
+				in Typed
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,45 @@
+expression DataMode = "Demo" meta [IsParameterQuery=true, List={"Demo", "Trino", "CSV"}, DefaultValue="Demo", Type="Text", IsParameterQueryRequired=true]
+	annotation PBI_ResultType = Text
+
+expression TrinoBaseUrl = "http://127.0.0.1:8080" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	annotation PBI_ResultType = Text
+
+expression CsvFolder = "" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=false]
+	annotation PBI_ResultType = Text
+
+expression ReadGold =
+		(dataset as text, sql as text, columns as list, fallback as list) as table =>
+		let
+		    Trino = () =>
+		        let
+		            Headers = [#"X-Trino-User" = "lakehouse", Accept = "application/json"],
+		            Validate = (page as record) as record =>
+		                if Record.HasFields(page, "error")
+		                then error Error.Record("Trino", page[error][message], Record.FieldOrDefault(page, "id"))
+		                else page,
+		            First = Validate(Json.Document(Web.Contents(TrinoBaseUrl,
+		                [RelativePath="v1/statement", Headers=Headers, Content=Text.ToBinary(sql)]))),
+		            Next = (uri as text) as record =>
+		                let Parts = Uri.Parts(uri) in
+		                Validate(Json.Document(Web.Contents(TrinoBaseUrl,
+		                    [RelativePath=Text.TrimStart(Parts[Path], "/"), Query=Parts[Query], Headers=Headers]))),
+		            Pages = List.Buffer(List.Generate(
+		                () => First,
+		                each _ <> null,
+		                each if Record.HasFields(_, "nextUri") then Next(_[nextUri]) else null)),
+		            Metadata = List.First(List.RemoveNulls(
+		                List.Transform(Pages, each Record.FieldOrDefault(_, "columns", null))), {}),
+		            Names = if List.IsEmpty(Metadata) then columns else List.Transform(Metadata, each _[name]),
+		            Rows = List.Combine(List.Transform(Pages, each Record.FieldOrDefault(_, "data", {})))
+		        in Table.SelectColumns(Table.FromRows(Rows, Names), columns),
+		    Csv = () =>
+		        if Text.Trim(CsvFolder) = "" then error "Set CsvFolder to the pipeline export folder."
+		        else Table.SelectColumns(Table.PromoteHeaders(Csv.Document(
+		            File.Contents(Text.TrimEnd(CsvFolder, {"/", Character.FromNumber(92)}) & "/" & dataset & ".csv"),
+		            [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv])), columns),
+		    Result = if DataMode = "Trino" then Trino()
+		        else if DataMode = "CSV" then Csv()
+		        else if DataMode = "Demo" then Table.FromRows(fallback, columns)
+		        else error "Use Demo, Trino, or CSV for DataMode."
+		in Result
+	annotation PBI_ResultType = Function

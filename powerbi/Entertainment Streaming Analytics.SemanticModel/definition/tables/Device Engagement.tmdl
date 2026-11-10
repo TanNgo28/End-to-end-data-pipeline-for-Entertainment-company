@@ -1,0 +1,40 @@
+table 'Device Engagement'
+
+	measure 'Device Events' = SUM('Device Engagement'[Event Count])
+		formatString: #,0
+
+	measure 'Average Watch Time (sec)' = DIVIDE(SUM('Device Engagement'[Watch Seconds]), [Device Events])
+		formatString: #,0.00
+
+	column 'Device'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: device
+
+	column 'Event Count'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: event_count
+		isHidden
+
+	column 'Watch Seconds'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: total_watch_seconds
+		isHidden
+
+	column 'Gold Average Watch Seconds'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: average_watch_seconds
+		isHidden
+
+	partition 'Device Engagement' = m
+		mode: import
+		source =
+				let
+				    Source = ReadGold("device_engagement", "SELECT device, CAST(event_count AS BIGINT) AS event_count, CAST(total_watch_seconds AS BIGINT) AS total_watch_seconds, round(average_watch_seconds, 2) AS average_watch_seconds FROM oracle.entertainment_analytics.device_engagement ORDER BY event_count DESC, device", {"device", "event_count", "total_watch_seconds", "average_watch_seconds"}, {{"mobile", 56, 5270, 94.11}, {"smart_tv", 56, 3092, 55.21}, {"tablet", 66, 4707, 71.32}, {"web", 62, 4850, 78.23}}),
+				    Typed = Table.TransformColumnTypes(Source, {{"device", type text}, {"event_count", Int64.Type}, {"total_watch_seconds", Int64.Type}, {"average_watch_seconds", type number}}, "en-US")
+				in Typed
+
+	annotation PBI_ResultType = Table

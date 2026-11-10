@@ -1,0 +1,38 @@
+table 'Streaming KPIs'
+
+	measure 'Total Plays' = SUM('Streaming KPIs'[Play Count])
+		formatString: #,0
+
+	measure 'Unique Viewers' = MAX('Streaming KPIs'[Unique Viewer Count])
+		formatString: #,0
+
+	measure 'Total Watch Time (min)' = DIVIDE(SUM('Streaming KPIs'[Watch Seconds]), 60)
+		formatString: #,0.00
+
+	column 'Play Count'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: play_count
+		isHidden
+
+	column 'Unique Viewer Count'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: unique_viewers
+		isHidden
+
+	column 'Watch Seconds'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: total_watch_seconds
+		isHidden
+
+	partition 'Streaming KPIs' = m
+		mode: import
+		source =
+				let
+				    Source = ReadGold("streaming_kpis", "SELECT CAST(play_count AS BIGINT) AS play_count, CAST(unique_viewers AS BIGINT) AS unique_viewers, CAST(total_watch_seconds AS BIGINT) AS total_watch_seconds, round(CAST(total_watch_seconds AS DOUBLE) / 60, 2) AS total_watch_minutes FROM oracle.entertainment_analytics.streaming_kpis WHERE kpi_key = 'ALL'", {"play_count", "unique_viewers", "total_watch_seconds"}, {{79, 30, 17919}}),
+				    Typed = Table.TransformColumnTypes(Source, {{"play_count", Int64.Type}, {"unique_viewers", Int64.Type}, {"total_watch_seconds", Int64.Type}}, "en-US")
+				in Typed
+
+	annotation PBI_ResultType = Table
