@@ -44,3 +44,9 @@ dist/
 *.egg-info/
 .DS_Store
 Thumbs.db
+
+# Power BI Desktop local state
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+**/.pbi/unappliedChanges.json
+*.abf

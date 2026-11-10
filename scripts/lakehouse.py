@@ -25,7 +25,8 @@ DATA = ROOT / ".runtime"
 PUBLISHED = DATA / "gold-publication.json"
 BRONZE = "bronze.streaming_events"
 SILVER = "silver.streaming_events_clean"
-GOLD = ("gold.content_popularity", "gold.device_engagement", "gold.streaming_kpis")
+GOLD = ("gold.content_popularity", "gold.device_engagement", "gold.streaming_kpis",
+        "gold.daily_streaming_trends", "gold.content_completion")
 MAX_ROWS = 100_000
 EVENT_TYPES = {"PLAY", "PAUSE", "COMPLETE", "RESUME", "STOP"}
 
@@ -122,6 +123,8 @@ def clean_rows(rows):
 def aggregate(rows):
     contents = defaultdict(lambda: {"plays": 0, "viewers": set(), "seconds": 0})
     devices = defaultdict(lambda: {"events": 0, "seconds": 0})
+    days = defaultdict(lambda: {"plays": 0, "seconds": 0})
+    terminal = defaultdict(lambda: {"completed": 0, "stopped": 0})
     viewers = set()
     for row in rows:
         content = contents[row["content_id"]]
@@ -130,7 +133,15 @@ def aggregate(rows):
         content["seconds"] += seconds
         device["seconds"] += seconds
         device["events"] += 1
-        if row["event_type"] == "PLAY":
+        day = days[row["event_timestamp"].date().isoformat()]
+        day["seconds"] += seconds
+        event_type = row["event_type"]
+        if event_type == "COMPLETE":
+            terminal[row["content_id"]]["completed"] += 1
+        elif event_type == "STOP":
+            terminal[row["content_id"]]["stopped"] += 1
+        if event_type == "PLAY":
+            day["plays"] += 1
             content["plays"] += 1
             content["viewers"].add(row["user_id"])
             viewers.add(row["user_id"])
@@ -148,7 +159,16 @@ def aggregate(rows):
         dict(kpi_key="ALL", play_count=sum(row["play_count"] for row in by_content),
              unique_viewers=len(viewers), total_watch_seconds=sum(row["total_watch_seconds"] for row in by_content))
     ]
-    return by_content, by_device, kpis
+    daily = [
+        dict(event_date=key, play_count=value["plays"], total_watch_seconds=value["seconds"])
+        for key, value in sorted(days.items())
+    ]
+    completion = [
+        dict(content_id=key, completed_count=terminal[key]["completed"],
+             stopped_count=terminal[key]["stopped"])
+        for key in sorted(contents)
+    ]
+    return by_content, by_device, kpis, daily, completion
 
 
 GOLD_SCHEMAS = (
@@ -159,6 +179,10 @@ GOLD_SCHEMAS = (
                ("total_watch_seconds", pa.int64()), ("average_watch_seconds", pa.float64())]),
     pa.schema([("kpi_key", pa.string()), ("play_count", pa.int64()),
                ("unique_viewers", pa.int64()), ("total_watch_seconds", pa.int64())]),
+    pa.schema([("event_date", pa.string()), ("play_count", pa.int64()),
+               ("total_watch_seconds", pa.int64())]),
+    pa.schema([("content_id", pa.string()), ("completed_count", pa.int64()),
+               ("stopped_count", pa.int64())]),
 )
 
 
@@ -202,7 +226,7 @@ def refresh():
         print(f"Bronze snapshot {source.snapshot_id}; Silver snapshot {silver_id}; {len(rows)} clean rows")
         for name, records in zip(GOLD, data, strict=True):
             print(f"{name}: {len(records)} rows, snapshot {snapshots[name]}")
-        print(json.dumps(data[-1][0]))
+        print(json.dumps(data[GOLD.index("gold.streaming_kpis")][0]))
 
 
 def wait_catalog():

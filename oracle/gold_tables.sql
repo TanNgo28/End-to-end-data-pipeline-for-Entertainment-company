@@ -19,3 +19,15 @@ CREATE TABLE IF NOT EXISTS streaming_kpis (
   unique_viewers NUMBER(19,0) NOT NULL,
   total_watch_seconds NUMBER(19,0) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS daily_streaming_trends (
+  event_date VARCHAR2(10 BYTE) PRIMARY KEY,
+  play_count NUMBER(19,0) NOT NULL,
+  total_watch_seconds NUMBER(19,0) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS content_completion (
+  content_id VARCHAR2(400 BYTE) PRIMARY KEY,
+  completed_count NUMBER(19,0) NOT NULL,
+  stopped_count NUMBER(19,0) NOT NULL
+);

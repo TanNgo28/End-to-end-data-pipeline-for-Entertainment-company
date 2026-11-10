@@ -17,6 +17,35 @@ expected_kpis AS (
          coalesce(sum(watch_duration_seconds), 0) AS seconds
   FROM source_rows
 ),
+expected_daily AS (
+  SELECT CAST(CAST(event_timestamp AT TIME ZONE 'UTC' AS DATE) AS VARCHAR) AS event_date,
+         count_if(event_type = 'PLAY') AS plays, sum(watch_duration_seconds) AS seconds
+  FROM source_rows GROUP BY 1
+),
+expected_completion AS (
+  SELECT content_id, count_if(event_type = 'COMPLETE') AS completed,
+         count_if(event_type = 'STOP') AS stopped
+  FROM source_rows GROUP BY content_id
+),
+daily_diff AS (
+  SELECT coalesce(e.event_date, g.event_date, o.event_date) AS id
+  FROM expected_daily e
+  FULL JOIN iceberg.gold.daily_streaming_trends g ON e.event_date = g.event_date
+  FULL JOIN oracle.entertainment_analytics.daily_streaming_trends o
+    ON coalesce(e.event_date, g.event_date) = o.event_date
+  WHERE e.plays IS DISTINCT FROM g.play_count OR g.play_count IS DISTINCT FROM o.play_count
+     OR e.seconds IS DISTINCT FROM g.total_watch_seconds
+     OR g.total_watch_seconds IS DISTINCT FROM o.total_watch_seconds
+),
+completion_diff AS (
+  SELECT coalesce(e.content_id, g.content_id, o.content_id) AS id
+  FROM expected_completion e
+  FULL JOIN iceberg.gold.content_completion g ON e.content_id = g.content_id
+  FULL JOIN oracle.entertainment_analytics.content_completion o
+    ON coalesce(e.content_id, g.content_id) = o.content_id
+  WHERE e.completed IS DISTINCT FROM g.completed_count OR g.completed_count IS DISTINCT FROM o.completed_count
+     OR e.stopped IS DISTINCT FROM g.stopped_count OR g.stopped_count IS DISTINCT FROM o.stopped_count
+),
 content_diff AS (
   SELECT coalesce(e.content_id, g.content_id, o.content_id) AS id
   FROM expected_content e
@@ -56,4 +85,6 @@ kpi_diff AS (
 SELECT 'content_popularity' AS dataset, count(*) AS mismatches FROM content_diff
 UNION ALL SELECT 'device_engagement', count(*) FROM device_diff
 UNION ALL SELECT 'streaming_kpis', count(*) FROM kpi_diff
+UNION ALL SELECT 'daily_streaming_trends', count(*) FROM daily_diff
+UNION ALL SELECT 'content_completion', count(*) FROM completion_diff
 ORDER BY dataset

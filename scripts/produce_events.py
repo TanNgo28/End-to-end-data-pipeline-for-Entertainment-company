@@ -27,7 +27,7 @@ def events(run_id, count):
             "event_type": event_type,
             "watch_duration_seconds": 0 if event_type in {"play", "resume"} else rng.randint(1, 360),
             "device": rng.choice(("smart_tv", "mobile", "web", "tablet")),
-            "event_timestamp": (base + timedelta(seconds=number)).isoformat().replace("+00:00", "Z"),
+            "event_timestamp": (base + timedelta(days=number % 7, seconds=number)).isoformat().replace("+00:00", "Z"),
         }
 
 

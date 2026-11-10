@@ -7,13 +7,20 @@ if running flink-jobmanager || running flink-taskmanager; then
   exit 1
 fi
 wait_healthy() {
-  local service=$1 timeout=$2 container state deadline
+  local service=$1 timeout=$2 container state deadline started
   container=$(compose ps -a -q "$service")
+  started=$(docker inspect --format '{{.State.StartedAt}}' "$container")
   deadline=$((SECONDS + timeout))
   while ((SECONDS < deadline)); do
     state=$(docker inspect --format '{{.State.Status}} {{.State.Health.Status}}' "$container")
     case "$state" in
-      'running healthy') return 0 ;;
+      'running healthy')
+        if [[ "$service" != oracle ]] ||
+          docker logs --since "$started" "$container" 2>&1 | grep -Fx 'DATABASE IS READY TO USE!' >/dev/null; then
+          return 0
+        fi
+        sleep 3
+        ;;
       running\ *) sleep 3 ;;
       *) printf '%s exited before becoming ready (%s)\n' "$service" "$state" >&2; return 1 ;;
     esac
