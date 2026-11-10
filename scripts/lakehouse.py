@@ -20,13 +20,15 @@ from pyiceberg.exceptions import RESTError
 from requests import RequestException
 from requests.auth import AuthBase
 
+from business_gold import BUSINESS, projections
+
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / ".runtime"
 PUBLISHED = DATA / "gold-publication.json"
 BRONZE = "bronze.streaming_events"
 SILVER = "silver.streaming_events_clean"
 GOLD = ("gold.content_popularity", "gold.device_engagement", "gold.streaming_kpis",
-        "gold.daily_streaming_trends", "gold.content_completion")
+        "gold.daily_streaming_trends", "gold.content_completion") + tuple(f"gold.{name}" for name in BUSINESS)
 MAX_ROWS = 100_000
 EVENT_TYPES = {"PLAY", "PAUSE", "COMPLETE", "RESUME", "STOP"}
 
@@ -183,7 +185,7 @@ GOLD_SCHEMAS = (
                ("total_watch_seconds", pa.int64())]),
     pa.schema([("content_id", pa.string()), ("completed_count", pa.int64()),
                ("stopped_count", pa.int64())]),
-)
+) + tuple(BUSINESS.values())
 
 
 def publish(lake, name, rows, schema, source_snapshot):
@@ -215,7 +217,7 @@ def refresh():
         rows = clean_rows(read_rows(bronze, source.snapshot_id))
         schema = bronze.schema().as_arrow()
         silver_id = publish(lake, SILVER, rows, schema, source.snapshot_id)
-        data = aggregate(rows)
+        data = aggregate(rows) + projections(rows)
         snapshots = {
             name: publish(lake, name, records, schema, silver_id)
             for name, records, schema in zip(GOLD, data, GOLD_SCHEMAS, strict=True)

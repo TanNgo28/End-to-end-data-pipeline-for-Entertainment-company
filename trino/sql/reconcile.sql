@@ -81,10 +81,34 @@ kpi_diff AS (
      OR e.viewers IS DISTINCT FROM g.unique_viewers OR g.unique_viewers IS DISTINCT FROM o.unique_viewers
      OR e.seconds IS DISTINCT FROM g.total_watch_seconds
      OR g.total_watch_seconds IS DISTINCT FROM o.total_watch_seconds
+),
+activity_serving_diff AS (
+  (SELECT hour_utc, event_count, play_count, active_users, watch_seconds FROM iceberg.gold.hourly_user_activity EXCEPT SELECT hour_utc, event_count, play_count, active_users, watch_seconds FROM oracle.entertainment_analytics.hourly_user_activity)
+  UNION ALL
+  (SELECT hour_utc, event_count, play_count, active_users, watch_seconds FROM oracle.entertainment_analytics.hourly_user_activity EXCEPT SELECT hour_utc, event_count, play_count, active_users, watch_seconds FROM iceberg.gold.hourly_user_activity)
+),
+events_serving_diff AS (
+  (SELECT show_id, show_name, category, capacity, sold, checked_in, net_revenue_vnd FROM iceberg.gold.event_performance EXCEPT SELECT show_id, show_name, category, capacity, sold, checked_in, net_revenue_vnd FROM oracle.entertainment_analytics.event_performance)
+  UNION ALL
+  (SELECT show_id, show_name, category, capacity, sold, checked_in, net_revenue_vnd FROM oracle.entertainment_analytics.event_performance EXCEPT SELECT show_id, show_name, category, capacity, sold, checked_in, net_revenue_vnd FROM iceberg.gold.event_performance)
+),
+booking_serving_diff AS (
+  (SELECT booking_status, booking_count, payments_captured, payments_declined, refunds, gross_vnd, refund_vnd FROM iceberg.gold.booking_transactions EXCEPT SELECT booking_status, booking_count, payments_captured, payments_declined, refunds, gross_vnd, refund_vnd FROM oracle.entertainment_analytics.booking_transactions)
+  UNION ALL
+  (SELECT booking_status, booking_count, payments_captured, payments_declined, refunds, gross_vnd, refund_vnd FROM oracle.entertainment_analytics.booking_transactions EXCEPT SELECT booking_status, booking_count, payments_captured, payments_declined, refunds, gross_vnd, refund_vnd FROM iceberg.gold.booking_transactions)
+),
+customer_serving_diff AS (
+  (SELECT customer_id, membership, last_stream_utc, streaming_events, plays, watch_seconds, bookings, confirmed, net_spend_vnd, check_ins FROM iceberg.gold.customer_360 EXCEPT SELECT customer_id, membership, last_stream_utc, streaming_events, plays, watch_seconds, bookings, confirmed, net_spend_vnd, check_ins FROM oracle.entertainment_analytics.customer_360)
+  UNION ALL
+  (SELECT customer_id, membership, last_stream_utc, streaming_events, plays, watch_seconds, bookings, confirmed, net_spend_vnd, check_ins FROM oracle.entertainment_analytics.customer_360 EXCEPT SELECT customer_id, membership, last_stream_utc, streaming_events, plays, watch_seconds, bookings, confirmed, net_spend_vnd, check_ins FROM iceberg.gold.customer_360)
 )
 SELECT 'content_popularity' AS dataset, count(*) AS mismatches FROM content_diff
 UNION ALL SELECT 'device_engagement', count(*) FROM device_diff
 UNION ALL SELECT 'streaming_kpis', count(*) FROM kpi_diff
 UNION ALL SELECT 'daily_streaming_trends', count(*) FROM daily_diff
 UNION ALL SELECT 'content_completion', count(*) FROM completion_diff
+UNION ALL SELECT 'hourly_user_activity', count(*) FROM activity_serving_diff
+UNION ALL SELECT 'event_performance', count(*) FROM events_serving_diff
+UNION ALL SELECT 'booking_transactions', count(*) FROM booking_serving_diff
+UNION ALL SELECT 'customer_360', count(*) FROM customer_serving_diff
 ORDER BY dataset
